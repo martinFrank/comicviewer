@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<HBox xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.github.martinfrank.comicviewer.ViewerController">
+    <ScrollPane prefHeight="200.0" prefWidth="100.0">
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
+            <TreeView fx:id="tree" prefHeight="200.0" prefWidth="200.0"/>
+        </AnchorPane>
+    </ScrollPane>
+    <VBox prefHeight="200.0" prefWidth="100.0">
+        <TextField/>
+        <ScrollPane prefHeight="200.0" prefWidth="100.0">
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
+                <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true"/>
+            </AnchorPane>
+        </ScrollPane>
+        <HBox prefHeight="100.0" prefWidth="200.0">
+            <Button mnemonicParsing="false" text="&lt;--" onAction="#prev"/>
+            <Button mnemonicParsing="false" text="--&gt;" onAction="#next"/>
+            <TextArea prefHeight="200.0" prefWidth="200.0"/>
+        </HBox>
+    </VBox>
+
+</HBox>

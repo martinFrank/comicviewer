@@ -6,6 +6,7 @@ target/
 
 #intellij
 .idea/
+*.iml
 
 # Log file
 *.log
