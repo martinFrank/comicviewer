@@ -15,12 +15,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ComicLoader {
+public class StructureLoader {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ComicLoader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StructureLoader.class);
     private final List<WebsiteStructure> structures = new ArrayList<>();
 
-    public ComicLoader(URL inputDirectory) {
+    public StructureLoader(URL inputDirectory) {
+        LOGGER.debug("inputDirectory {}", inputDirectory);
         List<File> structureFiles = getFiles(inputDirectory);
         LOGGER.debug("structureFiles {}", structureFiles);
         createStructures(structureFiles);

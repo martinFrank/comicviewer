@@ -4,9 +4,9 @@ import javafx.util.Callback;
 
 public class ControllerFactory implements Callback<Class<?>, Object> {
 
-    private final ComicLoader comicLoader;
+    private final StructureLoader comicLoader;
 
-    public ControllerFactory(ComicLoader comicLoader) {
+    public ControllerFactory(StructureLoader comicLoader) {
         this.comicLoader = comicLoader;
     }
 
