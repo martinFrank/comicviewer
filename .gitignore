@@ -8,6 +8,9 @@ target/
 .idea/
 *.iml
 
+#input dir
+structures/
+
 # Log file
 *.log
 

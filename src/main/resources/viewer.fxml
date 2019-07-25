@@ -8,24 +8,32 @@
            fx:controller="com.github.martinfrank.comicviewer.ViewerController">
     <items>
         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308"
-                    maxWidth="1.7976931348623157E308">
+                    maxWidth="1.7976931348623157E308" SplitPane.resizableWithParent="false">
             <TreeView fx:id="tree" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"/>
         </ScrollPane>
         <VBox maxHeight="1.7976931348623157E308" HBox.hgrow="ALWAYS" SplitPane.resizableWithParent="false">
-            <TextField maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="37.0"/>
-            <ScrollPane maxHeight="1.7976931348623157E308">
-                <ImageView fx:id="imageView" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true"
-                           preserveRatio="true"/>
-            </ScrollPane>
             <HBox fillHeight="false">
                 <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                        mnemonicParsing="false" onAction="#prev" prefHeight="37.0" prefWidth="34.0" text="&lt;--"
+                        mnemonicParsing="false" onAction="#prev" prefHeight="25.0" prefWidth="34.0" text="&lt;--"
                         HBox.hgrow="NEVER"/>
                 <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                        mnemonicParsing="false" onAction="#next" prefHeight="37.0" prefWidth="34.0" text="--&gt;"
+                        mnemonicParsing="false" onAction="#zoomIn" prefHeight="25.0" prefWidth="34.0" text="-"
                         HBox.hgrow="NEVER"/>
-                <TextArea maxHeight="-Infinity" minWidth="-Infinity" prefHeight="37.0" HBox.hgrow="ALWAYS"/>
+                <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                        mnemonicParsing="false" onAction="#zoomReset" prefHeight="25.0" prefWidth="34.0" text="+/-"
+                        HBox.hgrow="NEVER"/>
+                <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                        mnemonicParsing="false" onAction="#zoomOut" prefHeight="25.0" prefWidth="34.0" text="+"
+                        HBox.hgrow="NEVER"/>
+                <TextField fx:id="info" maxHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0"
+                           HBox.hgrow="ALWAYS"/>
+                <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                        mnemonicParsing="false" onAction="#next" prefHeight="25.0" prefWidth="34.0" text="--&gt;"
+                        HBox.hgrow="NEVER"/>
             </HBox>
+            <ScrollPane>
+                <ImageView fx:id="imageView" pickOnBounds="true" preserveRatio="true"/>
+            </ScrollPane>
         </VBox>
     </items>
 

@@ -4,6 +4,7 @@ import com.github.martinfrank.comicbrowser.xml.Page;
 import com.github.martinfrank.comicbrowser.xml.WebsiteStructure;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
@@ -13,24 +14,25 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class ViewerController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ViewerController.class);
 
-    private static final int CORE_POOL_SIZE = 1;
-    private static final int MAXIMUM_POOL_SIZE = 1;
-    private static final long KEEP_ALIVE_TIME = 1L;
-    private static final TimeUnit TIME_UNIT = TimeUnit.MILLISECONDS;
-
+    private static final double[] ZOOM_FACTORS = {0.125, 0.25, 0.33, 0.5, 0.75, 1, 1.33, 1.5, 2, 4, 6, 8};
+    private static final long POLL_TIME = 25;
+    private static final TimeUnit POLL_TIME_UNIT = TimeUnit.MILLISECONDS;
+    private int zoomFactorIndex = 6;
+    private String imageStack;
+    private String currentImage;
     private final BlockingQueue<Runnable> pool = new LinkedBlockingQueue<>();
-
-    private ThreadPoolExecutor threadPoolExecutor =
-            new ThreadPoolExecutor(CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_TIME, TIME_UNIT, pool);
-
+    private final ScheduledThreadPoolExecutor scheduledExecutorService = new ScheduledThreadPoolExecutor(1);
     private final StructureLoader comicLoader;
+
+    @FXML
+    public TextField info;
 
     @FXML
     public TreeView<Page> tree;
@@ -41,19 +43,27 @@ public class ViewerController {
 
     public ViewerController(StructureLoader comicLoader) {
         this.comicLoader = comicLoader;
+        scheduledExecutorService.scheduleAtFixedRate(createImageRefresher(), 0, POLL_TIME, POLL_TIME_UNIT);
+    }
 
+    private Runnable createImageRefresher() {
+        return () -> {
+            if (imageStack != null && !imageStack.equals(currentImage)) {
+                currentImage = imageStack;
+                imageView.setImage(new Image(currentImage));
+                LOGGER.debug("update image");
+            }
+        };
     }
 
 
     public void prev(ActionEvent event) {
-        TreeItem<Page> treeItem = tree.getSelectionModel().getSelectedItem();
-        if (treeItem != null) {
-            LOGGER.debug("move to the next from " + treeItem.getValue());
-        }
-
+        TreeWalker.moveUp(tree);
+        LOGGER.debug("event: prev");
     }
 
     public void next(ActionEvent event) {
+        TreeWalker.moveDown(tree);
         LOGGER.debug("event: next");
     }
 
@@ -75,30 +85,50 @@ public class ViewerController {
         }
         tree.setRoot(rootItem);
         tree.getSelectionModel().selectedItemProperty().
-                addListener((observable, oldValue, newValue) -> setNext(newValue.getValue()));
+                addListener((observable, oldValue, newValue) -> prepareImage(newValue.getValue()));
     }
 
-    private void setNext(Page value) {
+    private void prepareImage(Page value) {
         String imageUrl = value.getUrl();
         LOGGER.debug("image url to catch: {}", imageUrl);
         if (imageUrl != null && !imageUrl.isEmpty()) {
-            imageView.setImage(new Image(imageUrl));
+            imageStack = imageUrl;
+            info.setText(value.toString());
         }
     }
 
-    private void doIt() {
-        if (threadPoolExecutor.getActiveCount() == 0) {
-            LOGGER.debug("do it!!");
-        } else {
-            LOGGER.debug("still busy, skipping request");
-        }
-    }
 
     public void init() {
         initTree();
     }
 
     public void stop() {
-        threadPoolExecutor.shutdown();
+        scheduledExecutorService.shutdown();
+    }
+
+    public void zoomIn(ActionEvent event) {
+        zoomFactorIndex = zoomFactorIndex - 1;
+        if (zoomFactorIndex < 0) {
+            zoomFactorIndex = 0;
+        }
+        applyZoom();
+    }
+
+    public void zoomOut(ActionEvent event) {
+        zoomFactorIndex = zoomFactorIndex + 1;
+        if (zoomFactorIndex > ZOOM_FACTORS.length - 1) {
+            zoomFactorIndex = ZOOM_FACTORS.length - 1;
+        }
+        applyZoom();
+    }
+
+    public void zoomReset(ActionEvent event) {
+        zoomFactorIndex = 6;
+        applyZoom();
+    }
+
+    private void applyZoom() {
+        imageView.setScaleX(ZOOM_FACTORS[zoomFactorIndex]);
+        imageView.setScaleY(ZOOM_FACTORS[zoomFactorIndex]);
     }
 }
